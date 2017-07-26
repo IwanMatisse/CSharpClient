@@ -14,5 +14,7 @@ Screenshot:
 
 
 The project was created in the Visual Studio 2015.
+
 ZeroMQ for .Net https://github.com/zeromq/netmq
+
 Chart from MS WPF Toolkit.
