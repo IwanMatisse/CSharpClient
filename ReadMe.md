@@ -1,7 +1,7 @@
 ﻿# CSharpClient 
 ---
 
-It is a sample of implemantation of C# client for SimpleCGate. 
+It is a sample of implementation of C# client for SimpleCGate. 
 
 
 ## Functionality:
