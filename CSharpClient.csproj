@@ -60,7 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Entities\Account.cs" />
+    <Compile Include="Account.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\MyTrade.cs" />
     <Compile Include="Entities\Order.cs" />

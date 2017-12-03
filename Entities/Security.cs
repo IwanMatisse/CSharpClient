@@ -122,7 +122,7 @@ namespace SimpleClient
             return Isin == "" ? Id.ToString() : Isin;
         }
 
-       /* public bool Update(Security source)
+        public bool Update(Security source)
         {
             bool itChanged = false;
             itChanged = (Bid != source.Bid) || (Ask != source.Ask) || (Isin != source.Isin);
@@ -136,7 +136,7 @@ namespace SimpleClient
             LastPrice = source.LastPrice;
             return itChanged;
 
-        }*/
+        }
 
         public static Security Parse(BinaryReader data)
         {

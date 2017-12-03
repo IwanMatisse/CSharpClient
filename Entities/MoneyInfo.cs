@@ -125,8 +125,11 @@ namespace SimpleClient
         }
         
 
-        public void Update(MoneyInfo source)
+        public bool Update(MoneyInfo source)
         {
+            bool itChanged = (Free != source.Free) || (All != source.All) 
+                || (Blocked != source.Blocked) || (Fee != source.Fee) 
+                || (CoefGO != source.CoefGO);
             All = source.All;
             MoneyOnBegin = source.MoneyOnBegin;
             Free = source.Free;
@@ -134,15 +137,24 @@ namespace SimpleClient
             Fee = source.Fee;
             CoefGO = source.CoefGO;
             // VM = source.VM;
+            return itChanged;
         }
 
-        public void Parse(BinaryReader data)
+        public void UpdateVMData(decimal vm)
         {
-            CoefGO = (decimal)data.ReadDouble();
-            All = (decimal)data.ReadDouble();
-            Free = (decimal)data.ReadDouble();
-            Blocked = (decimal)data.ReadDouble();
-            Fee = (decimal)data.ReadDouble();              
+            VM = vm;
+        }
+
+        public static MoneyInfo Parse(BinaryReader data)
+        {
+            return new MoneyInfo()
+            {
+                CoefGO = (decimal)data.ReadDouble(),
+                All = (decimal)data.ReadDouble(),
+                Free = (decimal)data.ReadDouble(),
+                Blocked = (decimal)data.ReadDouble(),
+                Fee = (decimal)data.ReadDouble()
+            };
         }            
                
     }

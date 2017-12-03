@@ -53,24 +53,24 @@ namespace SimpleClient
 
     public class DataController
     {
-        private string ConnectionStringStream = "";
-        private string ConnectionStringRequest = "";
-        private string Account = "";
-        private int MessageRecieved = 0;
-        private int MessageOnServer = 0;
+        string ConnectionStringStream = "";
+        string ConnectionStringRequest = "";
+        string Account = "";
+        int MessageRecieved = 0;
+        int MessageOnServer = 0;
        
-        public MoneyInfo MoneyInfo = new MoneyInfo();     
-        private ConcurrentDictionary<int, Security> Securities = new ConcurrentDictionary<int, Security>();
-        private ConcurrentDictionary<int, Strategy> Strategies = new ConcurrentDictionary<int, Strategy>();
-        public List<Position> Positions = new List<Position>();
-        private Dictionary<int, Order> Orders = new Dictionary<int, Order>();
-        private ConcurrentQueue<ClientRequest> Commands = new ConcurrentQueue<ClientRequest>();
+        MoneyInfo _MoneyInfo = new MoneyInfo();     
+        ConcurrentDictionary<int, Security> _Securities = new ConcurrentDictionary<int, Security>();
+        ConcurrentDictionary<int, Strategy> _Strategies = new ConcurrentDictionary<int, Strategy>();
+        List<Position> _Positions = new List<Position>();
+        Dictionary<int, Order> _Orders = new Dictionary<int, Order>();
+        ConcurrentQueue<ClientRequest> _Commands = new ConcurrentQueue<ClientRequest>();
 
-        private bool bExit = false;
+        bool bExit = false;
         
         public DataController(string AccountName, string AddressStreamData, string AddressRequestData)
         {
-            MoneyInfo.Name = Account;
+            _MoneyInfo.Name = Account;
             Account = AccountName;
             ConnectionStringStream = AddressStreamData;
             ConnectionStringRequest = AddressRequestData;
@@ -78,11 +78,11 @@ namespace SimpleClient
 
         public void AddCommand(ClientRequest req)
         {
-            Commands.Enqueue(req);
+            _Commands.Enqueue(req);
         }
                 
         /// <summary>
-        /// Run process of recieve data in new stream
+        /// Run processes of receiving data in new threads
         /// </summary>
         public void SubscriberStart()
         {
@@ -127,7 +127,7 @@ namespace SimpleClient
                             if (MessageRecieved < MessageOnServer)
                             {           
                                 //fill the request message                     
-                                ClientRequest req = new ClientRequest(RequestType.kMessage, MessageRecieved + 1,0 );
+                                ClientRequest req = new ClientRequest(RequestType.kMessage, MessageRecieved + 1, 0);
 
                                 SendRequest(req, client);
                                 //get answer
@@ -136,11 +136,9 @@ namespace SimpleClient
                                     MessageRecieved++;
 
                             }
-                            if (Commands.Count > 0)
+                            if (_Commands.Count > 0)
                             {
-                                ClientRequest req;
-                                var result = Commands.TryDequeue(out req);
-                                if (result)
+                                if (_Commands.TryDequeue(out ClientRequest req))                               
                                 {
                                     SendRequest(req, client);
                                     var message = client.ReceiveMessage();
@@ -216,7 +214,7 @@ namespace SimpleClient
                     ProcessPositionData(data);
                     break;
                 case DataType.kPositionClear:
-                    Positions.Clear();
+                    _Positions.Clear();
                     break;
                 case DataType.kTrade:
                     ProcessTradeData(data);
@@ -239,11 +237,7 @@ namespace SimpleClient
             var oldSec = GetSecurityById(newSec.Id);
             if (oldSec.Update(newSec))
                 Application.Current.Dispatcher.BeginInvoke(
-                                       (Action)(() =>
-                                       {
-                                           if (SecurityChanged != null)
-                                               SecurityChanged(Account, oldSec);
-                                       }));
+                                       (Action)(() => SecurityChanged?.Invoke(Account, oldSec)));
         }
 
         private void ProcessStrategyData(BinaryReader data)
@@ -252,38 +246,25 @@ namespace SimpleClient
             var oldStr = GetStrategyById(newStr.Id);
             if (oldStr.Update(newStr))
                 Application.Current.Dispatcher.BeginInvoke(
-                                       (Action)(() =>
-                                       {
-                                           if (StrategyChanged != null)
-                                               StrategyChanged(Account, oldStr);
-                                       }));
+                                       (Action)(() => StrategyChanged?.Invoke(Account, oldStr)));
         }
 
         private void ProcessMoneyData(BinaryReader data)
-        {
-            var changed = MoneyInfo.Parse(data);           
-            if (changed)
+        {                 
+            if (_MoneyInfo.Update(MoneyInfo.Parse(data)))
                 Application.Current.Dispatcher.BeginInvoke(
-                                       (Action)(() =>
-                                       {
-                                           if (MoneyInfoChanged != null)
-                                               MoneyInfoChanged(Account, MoneyInfo);
-                                       }));
+                                       (Action)(() => MoneyInfoChanged?.Invoke(Account, _MoneyInfo)));
         }
 
         private void ProcessTradeData(BinaryReader data)
         {          
             Security sec = null;
             int symbolid = data.ReadInt32();
-            Securities.TryGetValue(symbolid, out sec);
+            _Securities.TryGetValue(symbolid, out sec);
             MyTrade deal = MyTrade.Parse(data, sec);                        
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                (Action)(() =>
-                                {
-                                    if (MyTradeAdded != null)
-                                        MyTradeAdded(Account, deal);
-                                }));   
+                                (Action)(() => MyTradeAdded?.Invoke(Account, deal)));   
         }
 
         private void ProcessPositionData(BinaryReader data)
@@ -291,18 +272,14 @@ namespace SimpleClient
             var pos = Position.Parse(data);
             bool _exist = false;
             //update position
-            foreach (var p in Positions)
+            foreach (var p in _Positions)
                 if (p.Security.Id == pos.SecurityId)
                 {
                     if (pos.Security == null)
                         pos.Security = GetSecurityById(pos.SecurityId);
                     if (p.Update(pos))
                         Application.Current.Dispatcher.BeginInvoke(
-                                               (Action)(() =>
-                                               {
-                                                   if (PositionChanged != null)
-                                                       PositionChanged(Account, p);
-                                               }));
+                                               (Action)(() =>PositionChanged?.Invoke(Account, p)));
                     _exist = true;
                     break;
                 }
@@ -311,13 +288,9 @@ namespace SimpleClient
             {
                 if (pos.Security == null)
                     pos.Security = GetSecurityById(pos.SecurityId);
-                Positions.Add(pos);
+                _Positions.Add(pos);
                 Application.Current.Dispatcher.BeginInvoke(
-                                       (Action)(() =>
-                                       {
-                                           if (PositionAdded != null)
-                                               PositionAdded(Account, pos);
-                                       }));
+                                       (Action)(() => PositionAdded?.Invoke(Account, pos)));
             }
         }
 
@@ -325,81 +298,71 @@ namespace SimpleClient
         {     
             Security sec = null;
             int symbolid = data.ReadInt32();
-            Securities.TryGetValue(symbolid, out sec);
+            _Securities.TryGetValue(symbolid, out sec);
             Order ord = Order.Parse(data, sec);           
 
-            if (Orders.ContainsKey(ord.OrderId))
+            if (_Orders.ContainsKey(ord.OrderId))
             {
-                Orders[ord.OrderId].Update(ord);
+                _Orders[ord.OrderId].Update(ord);
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                (Action)(() =>
-                                {
-                                    if (OrderChanged != null)
-                                        OrderChanged(Account, ord);
-                                }));
+                                (Action)(() =>                            
+                                        OrderChanged?.Invoke(Account, ord)
+                                ));
             }
             else
             {
 
-                Orders.Add(ord.OrderId, ord);
+                _Orders.Add(ord.OrderId, ord);
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                (Action)(() =>
-                                {
-                                    if (OrderAdded != null)
-                                        OrderAdded(Account, ord);
-                                }));
+                                (Action)(() => OrderAdded?.Invoke(Account, ord)));
             }               
             
         }
         private void ClearData()
         {
-            Securities.Clear();
-            Positions.Clear();
-            Orders.Clear();
+            _Securities.Clear();
+            _Positions.Clear();
+            _Orders.Clear();
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                        (Action)(() =>
-                                        {
-                                            if (ClearAll != null)
-                                                ClearAll(Account);
-                                        }));
+                                        (Action)(() => ClearAll?.Invoke(Account)));
         }
 
         public Security GetSecurityById(int isinid)
         {
-            if (Securities.ContainsKey(isinid))
-                return Securities[isinid];
+            if (_Securities.ContainsKey(isinid))
+                return _Securities[isinid];
             else
             {
                 Security sec = new Security();
                 sec.Id = isinid;
-                Securities[isinid] = sec;
+                _Securities[isinid] = sec;
                 return sec;
             }
         }
 
         public Strategy GetStrategyById(int id)
         {
-            if (Strategies.ContainsKey(id))
-                return Strategies[id];
+            if (_Strategies.ContainsKey(id))
+                return _Strategies[id];
             else
             {
                 Strategy str = new Strategy();
                 str.Id = id;
-                Strategies[id] = str;
+                _Strategies[id] = str;
                 return str;
             }
         }
 
-        public event Action<string, MoneyInfo> MoneyInfoChanged;
-        public event Action<string, Security> SecurityChanged;
-        public event Action<string, Strategy> StrategyChanged;
-        public event Action<string, Position> PositionChanged;
-        public event Action<string, Position> PositionAdded;
-        public event Action<string, MyTrade> MyTradeAdded;
+        public event Action<MoneyInfo> MoneyInfoChanged;
+        public event Action<Security> SecurityChanged;
+        public event Action<Strategy> StrategyChanged;
+        public event Action<Position> PositionChanged;
+        public event Action<Position> PositionAdded;
+        public event Action<MyTrade> MyTradeAdded;
 
-        public event Action<string, Order> OrderAdded;
-        public event Action<string, Order> OrderChanged;
-        public event Action<string> ClearAll;
+        public event Action<Order> OrderAdded;
+        public event Action<Order> OrderChanged;
+        public event Action ClearAll;
 
         ~DataController()
         {

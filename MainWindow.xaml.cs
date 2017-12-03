@@ -34,80 +34,16 @@ namespace SimpleClient
             testAccount = new Account(settings);
 
             mainView = testAccount.AccountView;
-            testAccount.Data.SecurityChanged += OnSecurityChanged;
-            testAccount.Data.MoneyInfoChanged += OnMoneyInfoChanged;
-            testAccount.Data.PositionAdded += OnPositionAdded;
-            testAccount.Data.PositionChanged += OnPositionChanged;
-            testAccount.Data.MyTradeAdded += OnMyTradeAdded;
-            testAccount.Data.OrderAdded += OnOrderAdded;
-            testAccount.Data.OrderChanged += OnOrderChanged;
-            testAccount.Data.ClearAll += OnClearAll;
-            testAccount.Data.StrategyChanged += OnStrategyChanged;
+        
             DataContext = mainView;
-
-            testAccount.Data.SubscriberStart();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            testAccount.Data.SecurityChanged -= OnSecurityChanged;
-            testAccount.Data.MoneyInfoChanged -= OnMoneyInfoChanged;
-            testAccount.Data.PositionAdded -= OnPositionAdded;
-            testAccount.Data.PositionChanged -= OnPositionChanged;
-            testAccount.Data.MyTradeAdded -= OnMyTradeAdded;
-            testAccount.Data.OrderAdded -= OnOrderAdded;
-            testAccount.Data.OrderChanged -= OnOrderChanged;
-            testAccount.Data.ClearAll -= OnClearAll;
-            testAccount.Data.StrategyChanged -= OnStrategyChanged;
-            testAccount.Data.SubscriberStop();
+           
         }
 
-        public void OnSecurityChanged(string account, Security Changed)
-        {
-           testAccount.SecurityViewChange(Changed);
-        }
-        public void OnStrategyChanged(string account, Strategy Changed)
-        {
-            testAccount.StrategyViewChange(Changed);
-        }
-        public void OnMyTradeAdded(string account, MyTrade trade)
-        {
-            testAccount.AccountView.MyTradeViews.Add(new MyTradeView(trade));
-        }
-
-        public void OnMoneyInfoChanged(string account, MoneyInfo Changed)
-        {
-            testAccount.MoneyInfoViewChange(Changed);   
-        }
-
-        public void OnPositionAdded(string account, Position pos)
-        {     
-            testAccount.UpdateVM();
-            testAccount.AddPositionView(pos);
-        }
-        /// <summary>
-        /// Handler for update changed position data  
-        /// </summary>
-        /// <param name="Changed"></param>
-        public void OnPositionChanged(string account, Position Changed)
-        {
-            testAccount.PositionViewChange(Changed);
-        }
-
-        public void OnOrderAdded(string account, Order Changed)
-        {
-            testAccount.OrderViewChange(Changed);
-        }
-
-        public void OnOrderChanged(string account, Order Changed)
-        {
-            testAccount.OrderViewChange(Changed);
-        }
-
-        public void OnClearAll(string account)
-        {
-            testAccount.AccountView.ClearAll();
-        }
+       
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

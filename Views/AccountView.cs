@@ -12,51 +12,58 @@ using System.Windows.Input;
 
 namespace SimpleClient
 {
-    public class AccountView : INotifyPropertyChanged
+    public class CommandEventArgs: EventArgs
+    {
+        public ClientRequest Request = null;
+    }
+
+    public class AccountView : Entity
     {
 
-        private string _name;
-        
-        public MoneyInfoView MoneyInfoView
+        private string _Name;
+        MoneyInfo _MoneyInfo;
+
+
+        public MoneyInfo MoneyInfo
         {
-            get { return _moneyInfo; }
+            get { return _MoneyInfo; }
             set
             {
-                if (_moneyInfo != value)
+                if (_MoneyInfo != value)
                 {
-                    _moneyInfo = value;
-                    NotifyPropertyChanged("MoneyInfoView");
+                    _MoneyInfo = value;
+                    NotifyPropertyChanged("MoneyInfo");
                 }
             }
         }
 
-        public ObservableCollection<SecurityView> SecurityViews { get; set; }
-        public ObservableCollection<PositionView> PositionViews { get; set; }
+        public ObservableCollection<Security> Securities { get; set; }
+        public ObservableCollection<Position> Positions { get; set; }
 
-        public ObservableCollection<MyTradeView> MyTradeViews { get; set; }
-        public ObservableCollection<StrategyView> StrategyViews { get; set; }
+        public ObservableCollection<MyTrade> MyTrades { get; set; }
+        public ObservableCollection<Strategy> Strategies { get; set; }
 
-        public ObservableCollection<OrderView> OrderViews { get; set; }
-        private Dictionary<int, OrderView> _ordDic = new Dictionary<int, OrderView>();
-        private MoneyInfoView _moneyInfo;
-       
-        public Account Account { get; set; }
+        public ObservableCollection<Order> Orders { get; set; }
+        private Dictionary<int, Order> _ordDic = new Dictionary<int, Order>();
+                      
 
         private readonly ICommand _ConnectCommand;
         private readonly ICommand _DisconnectCommand;
 
+        public event EventHandler<CommandEventArgs> SendCommand;
+
         public AccountView(Account account)
         {
-            _name = account.Settings.Name;
-            Account = account;
+            _Name = account.Settings.Name;
+            //Account = account;
             // Settings = settings;
 
-          
-            PositionViews = new ObservableCollection<PositionView>();
-            SecurityViews = new ObservableCollection<SecurityView>();
-            MyTradeViews = new ObservableCollection<MyTradeView>();        
-            OrderViews = new ObservableCollection<OrderView>();
-            StrategyViews = new ObservableCollection<StrategyView>();
+            MoneyInfo = new MoneyInfo();          
+            Positions = new ObservableCollection<Position>();
+            Securities = new ObservableCollection<Security>();
+            MyTrades = new ObservableCollection<MyTrade>();        
+            Orders = new ObservableCollection<Order>();
+            Strategies = new ObservableCollection<Strategy>();
 
             _ConnectCommand = new RelayCommand(arg => ConnectMethod());
             _DisconnectCommand = new RelayCommand(arg => DisconnectMethod());
@@ -74,47 +81,119 @@ namespace SimpleClient
 
         public void ConnectMethod()
         {
-            Account.SendCommand(new ClientRequest(RequestType.kConnect,0,0));           
+            SendCommand(this,new CommandEventArgs() { Request = new ClientRequest(RequestType.kConnect, 0, 0) });           
         }
 
         public void DisconnectMethod()
         {
-            Account.SendCommand(new ClientRequest(RequestType.kDisconnect, 0, 0));
+            SendCommand(this, new CommandEventArgs() { Request = new ClientRequest(RequestType.kDisconnect, 0, 0) });
         }
         public void ClearAll()
         {
-            MyTradeViews.Clear();
-            OrderViews.Clear();
-            PositionViews.Clear();
-            SecurityViews.Clear();
+            MyTrades.Clear();
+            Orders.Clear();
+            Positions.Clear();
+            Securities.Clear();
         }
-        public OrderView GetOrderByID(int _id)
+
+        Order GetOrderByID(int _id)
         {
             if (_ordDic.ContainsKey(_id))
                 return _ordDic[_id];
             return null;
         }
-        public void AddOrder(Order ord)
+
+        void AddOrder(Order ord)
         {
-            var orderView = new OrderView(ord);
-            _ordDic.Add(ord.OrderId, orderView);
-            OrderViews.Add(orderView);
+            var order = new Order();
+            order.Update(ord);
+            _ordDic.Add(ord.OrderId, order);
+            Orders.Add(order);
         }
 
         public string Name
         {
-            get { return _name; }
+            get { return _Name; }
         }
-        
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string propertyName)
+
+        public void UpdateVM()
         {
-            if (PropertyChanged != null)
+            if (MoneyInfo != null)
+                MoneyInfo.UpdateVMData(Positions.Sum(_pos => _pos.VM));
+        }
+
+        public void AddPositionView(Position pos)
+        {
+            var npos = new Position();
+            npos.Update(pos);
+            Positions.Add(npos);
+        }
+
+        public void AddMyTradeView(MyTrade trade)
+        {            
+            MyTrades.Add(new MyTrade(trade));
+        }
+        public void MoneyInfoViewChange(MoneyInfo info)
+        {
+            MoneyInfo.Update(info);
+        }
+
+        public void PositionViewChange(Position pos)
+        {
+           
+            if (MoneyInfo != null)
+                MoneyInfo.UpdateVMData(Positions.Sum(_pos => _pos.VM));
+            foreach (var _pos in Positions)
+                if (_pos.SecurityId == pos.SecurityId)
+                {
+                    _pos.Update(pos);
+                    return;
+                }
+            var npos = new Position();
+            npos.Update(pos);
+            Positions.Add(npos);
+        }
+
+        public void SecurityViewChange(Security Changed)
+        {
+            var sec = Securities.FirstOrDefault(_sec => _sec.Id == Changed.Id);
+            if (sec != null)
+                sec.Update(Changed);
+            else
             {
-                PropertyChanged(this,
-                    new PropertyChangedEventArgs(propertyName));
+                sec = new Security();
+                sec.Update(Changed);
+                Securities.Add(sec);
             }
+            if (Changed.BidVolume != 0 && Changed.AskVolume != 0)
+            {
+               // sec.AddBidAsk(Changed.Bid, Changed.Ask);
+            }
+        }
+
+        public void StrategyViewChange(Strategy Changed)
+        {
+            var sec = Strategies.FirstOrDefault(_sec => _sec.Id == Changed.Id);
+            if (sec != null)
+                sec.Update(Changed);
+            else
+            {
+                sec = new Strategy();
+                sec.Update(Changed);
+                Strategies.Add(sec);
+            }
+        }
+
+        public void OrderViewChange(Order Changed)
+        {
+            var ord = GetOrderByID(Changed.OrderId);
+            if (ord == null)
+            {
+                AddOrder(Changed);
+            }
+            else
+                ord.Update(Changed);
         }
 
 

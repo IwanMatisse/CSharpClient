@@ -156,10 +156,11 @@ namespace SimpleClient
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        /*public bool Update(Position source)
+        public bool Update(Position source)
         {
             bool itChanged = false;
-            itChanged = (Volume != source.Volume) || (VM != source.VM) || (Price != source.Price) || (BuyVolume != source.BuyVolume) || (SellVolume != source.SellVolume);
+            itChanged = (Volume != source.Volume) || (VM != source.VM) || (Price != source.Price) 
+                || (BuyVolume != source.BuyVolume) || (SellVolume != source.SellVolume);
 
             Security = source.Security;
             Volume = source.Volume;
@@ -171,7 +172,7 @@ namespace SimpleClient
             VM = source.VM;
             SecurityId = source.SecurityId;
             return itChanged;
-        }*/
+        }
 
         public static Position Parse(BinaryReader data)
         {

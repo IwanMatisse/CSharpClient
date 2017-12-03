@@ -94,7 +94,7 @@ namespace SimpleClient.Entities
             }
         }
 
-        
+
 
 
         /// <summary>
@@ -102,10 +102,12 @@ namespace SimpleClient.Entities
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-       /* public bool Update(Strategy source)
+        public bool Update(Strategy source)
         {
             bool itChanged = false;
-            itChanged = (Name != source.Name) || (Position != source.Position) || (Price != source.Price) || (State != source.State) || (Started != source.Started);
+            itChanged = (Name != source.Name) || (Position != source.Position)
+                || (Price != source.Price) || (State != source.State) 
+                || (Started != source.Started);
 
             Name = source.Name;
             Position = source.Position;
@@ -113,9 +115,9 @@ namespace SimpleClient.Entities
             State = source.State;
             Started = source.Started;
             Id = source.Id;
-            
+
             return itChanged;
-        }*/
+        }
 
         public static Strategy Parse(BinaryReader data)
         {           

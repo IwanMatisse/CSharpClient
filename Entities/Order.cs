@@ -146,7 +146,7 @@ namespace SimpleClient.Entities
             }
         }
 
-        /*public void Update(Order src)
+        public void Update(Order src)
         {            
             Time = src.Time;
             OrderId = src.OrderId;
@@ -157,7 +157,7 @@ namespace SimpleClient.Entities
             Direction = src.Direction;
             Status = src.Status;
             Time = src.Time;
-        }*/
+        }
 
         public static Order Parse(BinaryReader data, Security sec)
         {
