@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleClient"
-        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="SimpleClient.MainWindow"
+        x:Class="SimpleClient.MainWindow"
         mc:Ignorable="d"
         Title="Simple CSharp Client" Height="800" Width="1250" Closing="Window_Closing">
     <Window.Resources>
@@ -120,14 +120,6 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
-        <chartingToolkit:Chart x:Name="chart" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10,10,10,10" Grid.Row="2" Title="Chart" VerticalAlignment="Stretch" >
-
-            <chartingToolkit:LineSeries x:Name="BidChart" DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" Title="Bid" BorderBrush="#FF19830F">
-               
-            </chartingToolkit:LineSeries>
-            <chartingToolkit:LineSeries x:Name="AskChart" DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" Title="Ask" BorderBrush="#FFC96060">
-
-            </chartingToolkit:LineSeries>
-        </chartingToolkit:Chart>
+      
     </Grid>
 </Window>

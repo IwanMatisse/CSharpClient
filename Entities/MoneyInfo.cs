@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,31 +8,122 @@ using System.Threading.Tasks;
 
 namespace SimpleClient
 {
-    public class MoneyInfo
+    public class MoneyInfo : Entity
     {
-        public decimal All { get; set; }
-        public decimal MoneyOnBegin { get; set; }
-        public decimal Free { get; set; }
-        public decimal Blocked { get; set; }
-        public decimal Fee { get; set; }
-        public decimal CoefGO { get; set; }
-        public string Name { get; set; }
+        decimal _All;
+        decimal _MoneyOnBegin;
+        decimal _Free;
+        decimal _Blocked;
+        decimal _Fee;
+        decimal _CoefGO;
+        string _Name;
 
-        public decimal VM { get; set; }
-        public override string ToString()
+        decimal _VM;
+
+        public string Name
         {
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(Name);
-            sb.Append("Всего: "); sb.AppendLine(All.ToString("#,0.00"));
-            sb.Append("Позиции: "); sb.AppendLine(Blocked.ToString("#,0.00"));
-            sb.Append("Свободно: "); sb.AppendLine(Free.ToString("#,0.00"));
-            sb.Append("Сборы: "); sb.AppendLine(Fee.ToString("#,0.00"));
-            sb.Append("Коэф. ГО: "); sb.AppendLine(CoefGO.ToString("#,0.00"));
-            sb.Append("Вар.маржа: "); sb.AppendLine(VM.ToString("#,0.00"));
-
-            return sb.ToString();
+            get => _Name;
+            set
+            {
+                if (_Name != value)
+                {
+                    _Name = value;
+                    NotifyPropertyChanged("Name");
+                }
+            }
         }
+
+        public decimal All
+        {
+            get => _All;
+            set
+            {
+                if (_All != value)
+                {
+                    _All = value;
+                    NotifyPropertyChanged("All");
+                }
+            }
+        }
+
+        public decimal VM
+        {
+            get => _VM;
+            set
+            {
+                if (_VM != value)
+                {
+                    _VM = value;
+                    NotifyPropertyChanged("VM");
+                }
+            }
+        }
+
+        public decimal CoefGO
+        {
+            get => _CoefGO;
+            set
+            {
+                if (_CoefGO != value)
+                {
+                    _CoefGO = value;
+                    NotifyPropertyChanged("CoefGO");
+                }
+            }
+        }
+
+        public decimal Fee
+        {
+            get => _Fee;
+            set
+            {
+                if (_Fee != value)
+                {
+                    _Fee = value;
+                    NotifyPropertyChanged("Fee");
+                }
+            }
+        }
+
+        public decimal Blocked
+        {
+            get => _Blocked;
+            set
+            {
+                if (_Blocked != value)
+                {
+                    _Blocked = value;
+                    NotifyPropertyChanged("Blocked");
+                }
+            }
+        }
+
+        public decimal Free
+        {
+            get => _Free;
+            set
+            {
+                if (_Free != value)
+                {
+                    _Free = value;
+                    NotifyPropertyChanged("Free");
+                }
+            }
+        }
+
+        public decimal MoneyOnBegin
+        {
+            get => _MoneyOnBegin;
+            set
+            {
+                if (_MoneyOnBegin != value)
+                {
+                    _MoneyOnBegin = value;
+                    NotifyPropertyChanged("MoneyOnBegin");
+                }
+            }
+        }
+        
 
         public void Update(MoneyInfo source)
         {
@@ -44,29 +136,14 @@ namespace SimpleClient
             // VM = source.VM;
         }
 
-        public bool Parse(BinaryReader data)
+        public void Parse(BinaryReader data)
         {
-            /*double coeffGo = 0.0;
-          double all = 0.0;
-          double free = 0.0;
-          double blocked = 0.0;
-          double fee = 0.0;*/
-
             CoefGO = (decimal)data.ReadDouble();
             All = (decimal)data.ReadDouble();
             Free = (decimal)data.ReadDouble();
             Blocked = (decimal)data.ReadDouble();
-            Fee = (decimal)data.ReadDouble();  
-            return true;
-
-        }
-
-       /* private decimal ConvertAndCompare(string source, decimal old_value, ref bool itChanged)
-        {
-            var temp = 0;// Utils.ConvertToDecimal(source);
-            if (temp != old_value)
-                itChanged = true;
-            return temp;
-        }*/
+            Fee = (decimal)data.ReadDouble();              
+        }            
+               
     }
 }

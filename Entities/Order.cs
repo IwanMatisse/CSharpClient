@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,21 +9,144 @@ using System.Threading.Tasks;
 namespace SimpleClient.Entities
 {
     public enum OrderStatus { NONE = 0, ACTIVE = 1, DONE = 2, FAILED = 3 }
-    public class Order
+
+    public class Order : Entity
     {
-        public OrderStatus Status { get; set; }
-        public DateTime Time { get; set; }
-        public int Balance { get; set; }
-        public string Algo { get; set; }
+        OrderStatus _Status;
+        DateTime _Time;
+        int _Balance;
+        string _Algo;
 
-        public int OrderId { get; set; }
-        public Security Security { get; set; }
-        public decimal Price { get; set; }
+        int _OrderId;
+        Security _Security;
+        decimal _Price;
+        int _Volume;
+        Direction _Direction;
 
-        public int Volume { get; set; }
-        public Direction Direction { get; set; }
- 
-        public void Update(Order src)
+        public string PriceString
+        {
+            get => Price.ToString("F4");
+        }
+
+        public OrderStatus Status
+        {
+            get => _Status;
+            set
+            {
+                if (_Status != value)
+                {
+                    _Status = value;
+                    NotifyPropertyChanged("Status");
+                }
+            }
+        }
+
+        public Direction Direction
+        {
+            get => _Direction;
+            set
+            {
+                if (_Direction != value)
+                {
+                    _Direction = value;
+                    NotifyPropertyChanged("Direction");
+                }
+            }
+        }
+
+        public string Algo
+        {
+            get => _Algo;
+            set
+            {
+                if (_Algo != value)
+                {
+                    _Algo = value;
+                    NotifyPropertyChanged("Algo");
+                }
+            }
+        }
+
+        public int Volume
+        {
+            get => _Volume;
+            set
+            {
+                if (_Volume != value)
+                {
+                    _Volume = value;
+                    NotifyPropertyChanged("Volume");
+                }
+            }
+        }
+
+        public int Balance
+        {
+            get => _Balance;
+            set
+            {
+                if (_Balance != value)
+                {
+                    _Balance = value;
+                    NotifyPropertyChanged("Balance");
+                }
+            }
+        }
+
+        public decimal Price
+        {
+            get => _Price;
+            set
+            {
+                if (_Price != value)
+                {
+                    _Price = value;
+                    NotifyPropertyChanged("Price");
+                    NotifyPropertyChanged("PriceString");
+                }
+            }
+        }
+
+        public Security Security
+        {
+            get => _Security;
+            set
+            {
+                if (_Security != value)
+                {
+                    _Security = value;
+                    NotifyPropertyChanged("Security");
+                }
+            }
+        }
+
+        public int OrderId
+        {
+            get => _OrderId;
+            set
+            {
+                if (_OrderId != value)
+                {
+                    _OrderId = value;
+                    NotifyPropertyChanged("OrderId");
+                }
+            }
+        }
+
+        public DateTime Time
+        {
+            get => _Time;
+            set
+            {
+                if (_Time != value)
+                {
+                    _Time = value;
+                    NotifyPropertyChanged("Time");
+                }
+            }
+        }
+
+        /*public void Update(Order src)
         {            
             Time = src.Time;
             OrderId = src.OrderId;
@@ -33,19 +157,20 @@ namespace SimpleClient.Entities
             Direction = src.Direction;
             Status = src.Status;
             Time = src.Time;
-        }
+        }*/
 
         public static Order Parse(BinaryReader data, Security sec)
         {
-            Order ord = new Order();
-                        
-            ord.Security = sec;
-            ord.Volume = data.ReadInt32();
-            ord.Price = (decimal)data.ReadDouble();
-            ord.Direction = (Direction)data.ReadInt32();
-            ord.OrderId = data.ReadInt32();
-            ord.Status = (OrderStatus)data.ReadInt32();
-            ord.Balance = data.ReadInt32();
+            Order ord = new Order
+            {
+                Security = sec,
+                Volume = data.ReadInt32(),
+                Price = (decimal)data.ReadDouble(),
+                Direction = (Direction)data.ReadInt32(),
+                OrderId = data.ReadInt32(),
+                Status = (OrderStatus)data.ReadInt32(),
+                Balance = data.ReadInt32()
+            };
             int y = data.ReadInt32();
             int m = data.ReadInt32();
             int d = data.ReadInt32();
@@ -59,6 +184,6 @@ namespace SimpleClient.Entities
             //    ord.Time = DateTime.Now;
             return ord;
         }
-
+                
     }
 }

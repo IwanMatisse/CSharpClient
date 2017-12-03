@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,93 @@ using System.Threading.Tasks;
 
 namespace SimpleClient.Entities
 {
-    public class Strategy
+    public class Strategy : INotifyPropertyChanged
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Position { get; set; }
-        public decimal Price { get; set; }
-        public int State { get; set; }
-        public bool Started { get; set; }
+        int _Id;
+        string _Name;
+        int _Position;
+        decimal _Price;
+        int _State;
+        bool _Started;
+
+        public int Id
+        {
+            get => _Id;
+            set
+            {
+                if (_Id != value)
+                {
+                    _Id = value;
+                    NotifyPropertyChanged("Id");
+                }
+            }
+        }
+
+        public string Name
+        {
+            get => _Name;
+            set
+            {
+                if (_Name != value)
+                {
+                    _Name = value;
+                    NotifyPropertyChanged("Name");
+                }
+            }
+        }
+
+        public bool Started
+        {
+            get => _Started;
+            set
+            {
+                if (_Started != value)
+                {
+                    _Started = value;
+                    NotifyPropertyChanged("Started");
+                }
+            }
+        }
+
+        public int State {
+            get => _State;
+            set
+            {
+                if (_State != value)
+                {
+                    _State = value;
+                    NotifyPropertyChanged("State");
+                }
+            }
+        }
+
+        public int Position
+        {
+            get => _Position;
+            set
+            {
+                if (_Position != value)
+                {
+                    _Position = value;
+                    NotifyPropertyChanged("Position");
+                }
+            }
+        }
+
+        public decimal Price
+        {
+            get => _Price;
+            set
+            {
+                if (_Price != value)
+                {
+                    _Price = value;
+                    NotifyPropertyChanged("Price");
+                }
+            }
+        }
+
+        
 
 
         /// <summary>
@@ -22,7 +102,7 @@ namespace SimpleClient.Entities
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public bool Update(Strategy source)
+       /* public bool Update(Strategy source)
         {
             bool itChanged = false;
             itChanged = (Name != source.Name) || (Position != source.Position) || (Price != source.Price) || (State != source.State) || (Started != source.Started);
@@ -35,32 +115,25 @@ namespace SimpleClient.Entities
             Id = source.Id;
             
             return itChanged;
-        }
+        }*/
 
         public static Strategy Parse(BinaryReader data)
-        {
-            /*int id = 0;
-		double price = 0.0;
-		int volume = 0;
-		char state = 0;
-		bool enabled = false;
-		char name[10];*/
-            Strategy str = new Strategy();
-            str.Id = data.ReadInt32();
-            str.Price = (decimal)data.ReadDouble();
-            str.Position = data.ReadInt32();
-            str.State = data.ReadByte();
-            str.Started = data.ReadBoolean();
-           
-            var chars = data.ReadChars(10);
-            int len = 0;
-            while (chars[len] != 0 && len < 10)
-                len++;
-            str.Name = new string(chars, 0, len);
-
-            return str;
+        {           
+            return new Strategy
+            {
+                Id = data.ReadInt32(),
+                Price = (decimal)data.ReadDouble(),
+                Position = data.ReadInt32(),
+                State = data.ReadByte(),
+                Started = data.ReadBoolean(),
+                Name = data.ReadChars(10).TakeWhile(c => c != 0).Take(10).ToString()
+            };           
         }
 
-
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
