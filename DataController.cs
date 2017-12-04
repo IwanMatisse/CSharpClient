@@ -167,7 +167,8 @@ namespace SimpleClient
         /// receive streaming data
         /// </summary>
         public void StreamProcess()
-        {
+        {      
+
             using (var context = NetMQContext.Create())
             {
                 using (var subscriber = context.CreateSubscriberSocket())
@@ -231,7 +232,7 @@ namespace SimpleClient
             }
             return type;
         }
-        
+      
 
         private void ProcessSecurityData(BinaryReader data)
         {

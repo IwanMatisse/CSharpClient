@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiveCharts;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -19,30 +20,30 @@ namespace SimpleClient
         decimal _LastPrice;
 
 
-        /*private ObservableCollection<KeyValuePair<int, decimal>> bids = new ObservableCollection<KeyValuePair<int, decimal>>();
-        private ObservableCollection<KeyValuePair<int, decimal>> asks = new ObservableCollection<KeyValuePair<int, decimal>>();
+        private ChartValues<decimal> bids = new ChartValues<decimal>();
+        private ChartValues<decimal> asks = new ChartValues<decimal>();
         private int TicksCount = 0;
       
-        public ObservableCollection<KeyValuePair<int, decimal>> Bids
+        public ChartValues<decimal> Bids
         {
             get { return bids; }
         }
-        public ObservableCollection<KeyValuePair<int, decimal>> Asks
+        public ChartValues<decimal> Asks
         {
             get { return asks; }
         }
-*/
+
         public void AddBidAsk(decimal bid, decimal ask)
         {
-            /*if (bids.Count >= 50)
+            if (bids.Count >= 50)
                 bids.RemoveAt(0);
             if (asks.Count >= 50)
                 asks.RemoveAt(0);
             TicksCount++;
-            bids.Add(new KeyValuePair<int, decimal>(TicksCount, bid));
-            asks.Add(new KeyValuePair<int, decimal>(TicksCount, ask));
+            bids.Add(bid);
+            asks.Add(ask);
             NotifyPropertyChanged("Bids");
-            NotifyPropertyChanged("Asks");*/
+            NotifyPropertyChanged("Asks");
         }
         
 

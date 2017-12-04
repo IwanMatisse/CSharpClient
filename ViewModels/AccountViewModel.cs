@@ -22,6 +22,16 @@ namespace SimpleClient
         private string _Name;
         MoneyInfo _MoneyInfo;
 
+        Security _SelectedSecurity;
+        public Security SelectedSecurity
+        {
+            get => _SelectedSecurity;
+            set
+            {
+                _SelectedSecurity = value;
+                NotifyPropertyChanged("SelectedSecurity");
+            }
+        }
 
         public MoneyInfo MoneyInfo
         {

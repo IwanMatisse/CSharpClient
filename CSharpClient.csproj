@@ -35,6 +35,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiveCharts">
+      <HintPath>..\..\Live-Charts-master\WpfView\bin\Release\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf">
+      <HintPath>..\..\Live-Charts-master\WpfView\bin\Release\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="NetMQ">
       <HintPath>.\NetMQ.dll</HintPath>
     </Reference>

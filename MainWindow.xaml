@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleClient"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         x:Class="SimpleClient.MainWindow"
         mc:Ignorable="d"
         Title="Simple CSharp Client" Height="800" Width="1250" Closing="Window_Closing"
@@ -42,9 +43,9 @@
             <TextBlock Text="Variational margin:" Margin="10,0,10,0"/>
             <TextBlock Grid.Column="1" Text="{Binding Path=MoneyInfo.VM}" HorizontalAlignment="Right"/>
         </StackPanel>
-        <DataGrid ItemsSource="{Binding Path=Securities}" HorizontalAlignment="Stretch"  
+        <DataGrid ItemsSource="{Binding Path=Securities}" SelectedItem="{Binding Path=SelectedSecurity}" HorizontalAlignment="Stretch"  
                       VerticalAlignment="Stretch"  AutoGenerateColumns="False"
-                      IsReadOnly="True"  Grid.Row="2" Grid.RowSpan="2" Margin="0,0,0,0" SelectionChanged="DataGrid_SelectionChanged" SelectionMode="Single">
+                      IsReadOnly="True"  Grid.Row="2" Grid.RowSpan="2" Margin="0,0,0,0" SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name}" Width="70" Header="Symbol"/>
                 <DataGridTextColumn Binding="{Binding Bid}" Width="70" Header="Bid"/>
@@ -122,6 +123,17 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
-      
+        <lvc:CartesianChart DataContext="{Binding SelectedSecurity}" LegendLocation="Right" Grid.Column="1" Grid.Row="2" >
+            <lvc:CartesianChart.Series>
+                <lvc:LineSeries Title="Bid" Values="{Binding Path=Bids}"></lvc:LineSeries>
+                <lvc:LineSeries Title="Asks" Values="{Binding Path=Asks}"></lvc:LineSeries>
+            </lvc:CartesianChart.Series>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis Title="Price" ></lvc:Axis>
+            </lvc:CartesianChart.AxisY>
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis Title="Time" ></lvc:Axis>
+            </lvc:CartesianChart.AxisX>
+        </lvc:CartesianChart>
     </Grid>
 </Window>

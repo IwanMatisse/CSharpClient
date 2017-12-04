@@ -45,17 +45,6 @@ namespace SimpleClient
         {
            
         }
-
-       
-
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count == 1)
-            {
-                //chart.Title = (e.AddedItems[0] as SecurityView).Name;
-                //BidChart.DataContext = (e.AddedItems[0] as SecurityView).Bids;
-                //AskChart.DataContext = (e.AddedItems[0] as SecurityView).Asks;
-            }
-        }
+                       
     }
 }
