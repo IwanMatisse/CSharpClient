@@ -1,6 +1,5 @@
 ﻿using SimpleClient.Entities;
 using SimpleClient.Utils;
-using SimpleClient.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,27 +46,34 @@ namespace SimpleClient
         private Dictionary<int, Order> _ordDic = new Dictionary<int, Order>();
                       
 
-        private readonly ICommand _ConnectCommand;
-        private readonly ICommand _DisconnectCommand;
+        private ICommand _ConnectCommand;
+        private ICommand _DisconnectCommand;
 
         public event EventHandler<CommandEventArgs> SendCommand;
 
-        public AccountView(Account account)
+        private void _Init()
         {
-            _Name = account.Settings.Name;
-            //Account = account;
-            // Settings = settings;
-
-            MoneyInfo = new MoneyInfo();          
+            MoneyInfo = new MoneyInfo();
             Positions = new ObservableCollection<Position>();
             Securities = new ObservableCollection<Security>();
-            MyTrades = new ObservableCollection<MyTrade>();        
+            MyTrades = new ObservableCollection<MyTrade>();
             Orders = new ObservableCollection<Order>();
             Strategies = new ObservableCollection<Strategy>();
 
             _ConnectCommand = new RelayCommand(arg => ConnectMethod());
             _DisconnectCommand = new RelayCommand(arg => DisconnectMethod());
+        }
 
+        public AccountView()
+        {
+            _Name = "";
+            _Init();
+        }
+
+        public AccountView(string accountName)
+        {
+            _Name = accountName ?? "";
+            _Init();
         }
 
         public ICommand ConnectCommand
@@ -81,12 +87,12 @@ namespace SimpleClient
 
         public void ConnectMethod()
         {
-            SendCommand(this,new CommandEventArgs() { Request = new ClientRequest(RequestType.kConnect, 0, 0) });           
+            SendCommand?.Invoke(this,new CommandEventArgs() { Request = new ClientRequest(RequestType.kConnect, 0, 0) });           
         }
 
         public void DisconnectMethod()
         {
-            SendCommand(this, new CommandEventArgs() { Request = new ClientRequest(RequestType.kDisconnect, 0, 0) });
+            SendCommand?.Invoke(this, new CommandEventArgs() { Request = new ClientRequest(RequestType.kDisconnect, 0, 0) });
         }
         public void ClearAll()
         {
@@ -131,8 +137,10 @@ namespace SimpleClient
         }
 
         public void AddMyTradeView(MyTrade trade)
-        {            
-            MyTrades.Add(new MyTrade(trade));
+        {
+            var tr = new MyTrade();
+            tr.Update(trade);
+            MyTrades.Add(tr);
         }
         public void MoneyInfoViewChange(MoneyInfo info)
         {
@@ -168,7 +176,7 @@ namespace SimpleClient
             }
             if (Changed.BidVolume != 0 && Changed.AskVolume != 0)
             {
-               // sec.AddBidAsk(Changed.Bid, Changed.Ask);
+                sec.AddBidAsk(Changed.Bid, Changed.Ask);
             }
         }
 

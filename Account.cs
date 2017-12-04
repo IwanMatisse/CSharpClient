@@ -1,5 +1,4 @@
 ﻿using SimpleClient.Entities;
-using SimpleClient.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +17,7 @@ namespace SimpleClient
         public Account(AccountSettings settings)
         {
             Settings = settings;            
-            AccountView = new AccountView(this);
+            AccountView = new AccountView(Settings.Name);
             AccountView.SendCommand += SendCommand;
             Data = new DataController(Settings.Name, Settings.AddressStreamData, Settings.AddressRequestData);
 

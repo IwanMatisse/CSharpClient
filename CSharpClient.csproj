@@ -61,24 +61,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Account.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\MyTrade.cs" />
-    <Compile Include="Entities\Order.cs" />
-    <Compile Include="Entities\Strategy.cs" />
+    <Compile Include="Models\Entity.cs" />
+    <Compile Include="Models\MyTrade.cs" />
+    <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\Strategy.cs" />
     <Compile Include="Utils\AccountSettings.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
-    <Compile Include="Views\AccountView.cs" />
+    <Compile Include="ViewModels\AccountViewModel.cs" />
     <Compile Include="Utils\Convertors.cs" />
     <Compile Include="DataController.cs" />
-    <Compile Include="Entities\MoneyInfo.cs" />
-    <Compile Include="Views\MoneyInfoView.cs" />
-    <Compile Include="Entities\Position.cs" />
-    <Compile Include="Views\MyTradeView.cs" />
-    <Compile Include="Views\OrderView.cs" />
-    <Compile Include="Views\PositionView.cs" />
-    <Compile Include="Entities\Security.cs" />
-    <Compile Include="Views\SecurityView.cs" />
-    <Compile Include="Views\StrategyView.cs" />
+    <Compile Include="Models\MoneyInfo.cs" />
+    <Compile Include="Models\Position.cs" />
+    <Compile Include="Models\Security.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

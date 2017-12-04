@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,34 @@ namespace SimpleClient
         int _BidVolume;
         int _AskVolume;
         decimal _LastPrice;
+
+
+        /*private ObservableCollection<KeyValuePair<int, decimal>> bids = new ObservableCollection<KeyValuePair<int, decimal>>();
+        private ObservableCollection<KeyValuePair<int, decimal>> asks = new ObservableCollection<KeyValuePair<int, decimal>>();
+        private int TicksCount = 0;
+      
+        public ObservableCollection<KeyValuePair<int, decimal>> Bids
+        {
+            get { return bids; }
+        }
+        public ObservableCollection<KeyValuePair<int, decimal>> Asks
+        {
+            get { return asks; }
+        }
+*/
+        public void AddBidAsk(decimal bid, decimal ask)
+        {
+            /*if (bids.Count >= 50)
+                bids.RemoveAt(0);
+            if (asks.Count >= 50)
+                asks.RemoveAt(0);
+            TicksCount++;
+            bids.Add(new KeyValuePair<int, decimal>(TicksCount, bid));
+            asks.Add(new KeyValuePair<int, decimal>(TicksCount, ask));
+            NotifyPropertyChanged("Bids");
+            NotifyPropertyChanged("Asks");*/
+        }
+        
 
         public string Name { get => Isin == "" ? Id.ToString() : Isin; }
 

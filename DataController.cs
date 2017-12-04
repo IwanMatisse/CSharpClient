@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -163,7 +164,7 @@ namespace SimpleClient
 
 
         /// <summary>
-        /// recieve streaming data
+        /// receive streaming data
         /// </summary>
         public void StreamProcess()
         {
@@ -231,13 +232,14 @@ namespace SimpleClient
             return type;
         }
         
+
         private void ProcessSecurityData(BinaryReader data)
         {
             var newSec = Security.Parse(data);
             var oldSec = GetSecurityById(newSec.Id);
             if (oldSec.Update(newSec))
                 Application.Current.Dispatcher.BeginInvoke(
-                                       (Action)(() => SecurityChanged?.Invoke(Account, oldSec)));
+                                       (Action)(() => SecurityChanged?.Invoke(oldSec)));
         }
 
         private void ProcessStrategyData(BinaryReader data)
@@ -246,14 +248,14 @@ namespace SimpleClient
             var oldStr = GetStrategyById(newStr.Id);
             if (oldStr.Update(newStr))
                 Application.Current.Dispatcher.BeginInvoke(
-                                       (Action)(() => StrategyChanged?.Invoke(Account, oldStr)));
+                                       (Action)(() => StrategyChanged?.Invoke(oldStr)));
         }
 
         private void ProcessMoneyData(BinaryReader data)
         {                 
             if (_MoneyInfo.Update(MoneyInfo.Parse(data)))
                 Application.Current.Dispatcher.BeginInvoke(
-                                       (Action)(() => MoneyInfoChanged?.Invoke(Account, _MoneyInfo)));
+                                       (Action)(() => MoneyInfoChanged?.Invoke(_MoneyInfo)));
         }
 
         private void ProcessTradeData(BinaryReader data)
@@ -264,7 +266,7 @@ namespace SimpleClient
             MyTrade deal = MyTrade.Parse(data, sec);                        
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                (Action)(() => MyTradeAdded?.Invoke(Account, deal)));   
+                                (Action)(() => MyTradeAdded?.Invoke(deal)));   
         }
 
         private void ProcessPositionData(BinaryReader data)
@@ -279,7 +281,7 @@ namespace SimpleClient
                         pos.Security = GetSecurityById(pos.SecurityId);
                     if (p.Update(pos))
                         Application.Current.Dispatcher.BeginInvoke(
-                                               (Action)(() =>PositionChanged?.Invoke(Account, p)));
+                                               (Action)(() =>PositionChanged?.Invoke(p)));
                     _exist = true;
                     break;
                 }
@@ -290,7 +292,7 @@ namespace SimpleClient
                     pos.Security = GetSecurityById(pos.SecurityId);
                 _Positions.Add(pos);
                 Application.Current.Dispatcher.BeginInvoke(
-                                       (Action)(() => PositionAdded?.Invoke(Account, pos)));
+                                       (Action)(() => PositionAdded?.Invoke(pos)));
             }
         }
 
@@ -306,7 +308,7 @@ namespace SimpleClient
                 _Orders[ord.OrderId].Update(ord);
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                                 (Action)(() =>                            
-                                        OrderChanged?.Invoke(Account, ord)
+                                        OrderChanged?.Invoke(ord)
                                 ));
             }
             else
@@ -314,7 +316,7 @@ namespace SimpleClient
 
                 _Orders.Add(ord.OrderId, ord);
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                (Action)(() => OrderAdded?.Invoke(Account, ord)));
+                                (Action)(() => OrderAdded?.Invoke(ord)));
             }               
             
         }
@@ -324,7 +326,7 @@ namespace SimpleClient
             _Positions.Clear();
             _Orders.Clear();
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                        (Action)(() => ClearAll?.Invoke(Account)));
+                                        (Action)(() => ClearAll?.Invoke()));
         }
 
         public Security GetSecurityById(int isinid)

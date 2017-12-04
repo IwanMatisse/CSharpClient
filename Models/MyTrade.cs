@@ -168,6 +168,19 @@ namespace SimpleClient.Entities
    
             return deal;
         }
-               
+
+
+        public void Update(MyTrade src)
+        {
+            Time = src.Time;
+            TradeId = src.TradeId;
+            Security = src.Security;
+            Price = src.Price;
+            Volume = src.Volume;          
+            Direction = src.Direction;          
+            Time = src.Time;
+            Algo = src.Algo;
+            SecurityId = src.SecurityId;
+        }
     }
 }

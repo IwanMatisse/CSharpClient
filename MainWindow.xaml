@@ -6,9 +6,11 @@
         xmlns:local="clr-namespace:SimpleClient"
         x:Class="SimpleClient.MainWindow"
         mc:Ignorable="d"
-        Title="Simple CSharp Client" Height="800" Width="1250" Closing="Window_Closing">
+        Title="Simple CSharp Client" Height="800" Width="1250" Closing="Window_Closing"
+        DataContext="{DynamicResource MainViewModel}">
     <Window.Resources>
         <local:DateTimeConverter x:Key="DateTimeConverter" />
+        <local:AccountView x:Key="MainViewModel"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -32,33 +34,33 @@
             <TextBlock Text="Money and limits [ "/>
             <TextBlock HorizontalAlignment="Stretch"  Text="{Binding Name}" VerticalAlignment="Top" />
             <TextBlock Text="] All:" Margin="10,0,10,0"/>
-            <TextBlock Grid.Column="1" Text="{Binding MoneyInfoView.All}"  HorizontalAlignment="Right"/>
+            <TextBlock Grid.Column="1" Text="{Binding Path=MoneyInfo.All}"  HorizontalAlignment="Right"/>
             <TextBlock Text="Blocked:" Margin="10,0,10,0"/>
-            <TextBlock Grid.Column="1" Text="{Binding MoneyInfoView.Blocked}" HorizontalAlignment="Right"/>
+            <TextBlock Grid.Column="1" Text="{Binding Path=MoneyInfo.Blocked}" HorizontalAlignment="Right"/>
             <TextBlock Text="Free:" Margin="10,0,10,0"/>
-            <TextBlock Text="{Binding MoneyInfoView.Free}" HorizontalAlignment="Right"/>
+            <TextBlock Text="{Binding Path=MoneyInfo.Free}" HorizontalAlignment="Right"/>
             <TextBlock Text="Variational margin:" Margin="10,0,10,0"/>
-            <TextBlock Grid.Column="1" Text="{Binding MoneyInfoView.VM}" HorizontalAlignment="Right"/>
+            <TextBlock Grid.Column="1" Text="{Binding Path=MoneyInfo.VM}" HorizontalAlignment="Right"/>
         </StackPanel>
-        <DataGrid ItemsSource="{Binding SecurityViews}" HorizontalAlignment="Stretch"  
+        <DataGrid ItemsSource="{Binding Path=Securities}" HorizontalAlignment="Stretch"  
                       VerticalAlignment="Stretch"  AutoGenerateColumns="False"
                       IsReadOnly="True"  Grid.Row="2" Grid.RowSpan="2" Margin="0,0,0,0" SelectionChanged="DataGrid_SelectionChanged" SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name}" Width="70" Header="Symbol"/>
-                <DataGridTextColumn Binding="{Binding Security.Bid}" Width="70" Header="Bid"/>
-                <DataGridTextColumn Binding="{Binding Security.Ask}" Width="70" Header="Ask"/>
+                <DataGridTextColumn Binding="{Binding Bid}" Width="70" Header="Bid"/>
+                <DataGridTextColumn Binding="{Binding Ask}" Width="70" Header="Ask"/>
 
             </DataGrid.Columns>
         </DataGrid>
 
-        <DataGrid ItemsSource="{Binding PositionViews}" HorizontalAlignment="Stretch"  
+        <DataGrid ItemsSource="{Binding Positions}" HorizontalAlignment="Stretch"  
                       VerticalAlignment="Stretch"  AutoGenerateColumns="False"
                       IsReadOnly="True"  Grid.Row="2" Grid.Column="2" Margin="0,0,0,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name}" Width="70" Header="Symbol"/>
-                <DataGridTextColumn Binding="{Binding Position.Volume}" Width="50" Header="Volume"/>
-                <DataGridTextColumn Binding="{Binding Position.Price}" Width="40" Header="Price"/>
-                <DataGridTextColumn Binding="{Binding Position.VM}" Width="40" Header="VM"/>
+                <DataGridTextColumn Binding="{Binding Volume}" Width="50" Header="Volume"/>
+                <DataGridTextColumn Binding="{Binding Price}" Width="40" Header="Price"/>
+                <DataGridTextColumn Binding="{Binding VM}" Width="40" Header="VM"/>
 
             </DataGrid.Columns>
             <DataGrid.RowStyle>
@@ -78,29 +80,29 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <TextBlock><Run Text="My trades:"/></TextBlock>
-            <DataGrid ItemsSource="{Binding OrderViews}" HorizontalAlignment="Stretch"  
+            <DataGrid ItemsSource="{Binding Path=Orders}" HorizontalAlignment="Stretch"  
                       VerticalAlignment="Stretch"  AutoGenerateColumns="False"
                       IsReadOnly="True" Grid.Row="1" Grid.Column="1" Margin="0,0,0,0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Order.Time, Converter={StaticResource DateTimeConverter}}"  Width="80" Header="Time"/>
-                    <DataGridTextColumn Binding="{Binding Order.Security}" Width="70" Header="Symbol"/>
-                    <DataGridTextColumn Binding="{Binding Order.Volume}" Width="40" Header="Volume"/>
-                    <DataGridTextColumn Binding="{Binding Order.Balance}" Width="40" Header="Balance"/>
+                    <DataGridTextColumn Binding="{Binding Time, Converter={StaticResource DateTimeConverter}}"  Width="80" Header="Time"/>
+                    <DataGridTextColumn Binding="{Binding Security}" Width="70" Header="Symbol"/>
+                    <DataGridTextColumn Binding="{Binding Volume}" Width="40" Header="Volume"/>
+                    <DataGridTextColumn Binding="{Binding Balance}" Width="40" Header="Balance"/>
                     <DataGridTextColumn Binding="{Binding PriceString}" Width="40" Header="Price"/>
-                    <DataGridTextColumn Binding="{Binding Order.Direction}" Width="40" Header="Dir"/>
-                    <DataGridTextColumn Binding="{Binding Order.Status}" Width="40" Header="State"/>
+                    <DataGridTextColumn Binding="{Binding Direction}" Width="40" Header="Dir"/>
+                    <DataGridTextColumn Binding="{Binding Status}" Width="40" Header="State"/>
                 </DataGrid.Columns>
             </DataGrid>
             <TextBlock Grid.Column="1"><Run Text="My orders:"/></TextBlock>
-            <DataGrid ItemsSource="{Binding MyTradeViews}" HorizontalAlignment="Stretch"  
+            <DataGrid ItemsSource="{Binding MyTrades}" HorizontalAlignment="Stretch"  
                       VerticalAlignment="Stretch"  AutoGenerateColumns="False"
                       IsReadOnly="True" Grid.Row="1" Grid.Column="0" Margin="0,0,0,0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Trade.Time, Converter={StaticResource DateTimeConverter}}"  Width="80" Header="Time"/>
-                    <DataGridTextColumn Binding="{Binding Trade.Security}" Width="70" Header="Symbol"/>
-                    <DataGridTextColumn Binding="{Binding Trade.Volume}" Width="40" Header="Volume"/>
+                    <DataGridTextColumn Binding="{Binding Time, Converter={StaticResource DateTimeConverter}}"  Width="80" Header="Time"/>
+                    <DataGridTextColumn Binding="{Binding Security}" Width="70" Header="Symbol"/>
+                    <DataGridTextColumn Binding="{Binding Volume}" Width="40" Header="Volume"/>
                     <DataGridTextColumn Binding="{Binding PriceString}" Width="40" Header="Price"/>
-                    <DataGridTextColumn Binding="{Binding Trade.Direction}" Width="40" Header="Dir"/>
+                    <DataGridTextColumn Binding="{Binding Direction}" Width="40" Header="Dir"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -110,13 +112,13 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <TextBlock><Run Text="Strategies:"/></TextBlock>
-            <DataGrid ItemsSource="{Binding StrategyViews}" HorizontalAlignment="Stretch"  
+            <DataGrid ItemsSource="{Binding Strategies}" HorizontalAlignment="Stretch"  
                       VerticalAlignment="Stretch"  AutoGenerateColumns="False"
                       IsReadOnly="True" Grid.Row="1" Grid.Column="1" Margin="0,0,0,0">
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Binding="{Binding Strategy.Started}"  Width="50" Header="Started"/>
+                    <DataGridCheckBoxColumn Binding="{Binding Started}"  Width="50" Header="Started"/>
                     <DataGridTextColumn Binding="{Binding Name}" Width="70" Header="Name"/>
-                    <DataGridTextColumn Binding="{Binding Strategy.Position}" Width="40" Header="Position"/>
+                    <DataGridTextColumn Binding="{Binding Position}" Width="40" Header="Position"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
